@@ -10,7 +10,7 @@ class BorrowingViewSet(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     mixins.CreateModelMixin,
-    viewsets.GenericViewSet
+    viewsets.GenericViewSet,
 ):
     queryset = Borrowing.objects.all()
     serializer_class = BorrowingSerializer
@@ -31,3 +31,6 @@ class BorrowingViewSet(
             return BorrowingDetailSerializer
 
         return BorrowingSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
