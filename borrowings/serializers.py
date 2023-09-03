@@ -8,6 +8,13 @@ class BorrowingSerializer(serializers.ModelSerializer):
     def validate(self, attrs):
         actual_return_date = attrs.get("password", "")
 
+        if actual_return_date == "":
+            Borrowing.validate_book_inventory(
+                attrs["book"].inventory,
+                attrs["book"].title,
+                serializers.ValidationError,
+            )
+
         data = super(BorrowingSerializer, self).validate(attrs)
 
         Borrowing.validate_expected_return_date(

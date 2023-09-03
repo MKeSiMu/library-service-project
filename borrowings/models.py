@@ -49,12 +49,30 @@ class Borrowing(models.Model):
                     }
                 )
 
+    @staticmethod
+    def validate_book_inventory(inventory, title, error_to_raise):
+        if not (inventory > 0):
+            raise error_to_raise(
+                {
+                    "book": (
+                        f"There is no available {title} book to borrow"
+                    )
+                }
+            )
+
     def clean(
         self, force_insert=False, force_update=False, using=None, update_field=None
     ):
+        Borrowing.validate_book_inventory(
+            self.book.inventory,
+            self.book.title,
+            ValidationError
+        )
+
         Borrowing.validate_expected_return_date(
             self.expected_return_date, ValidationError
         )
+
         if self.actual_return_date:
             Borrowing.validate_actual_return_date(
                 self.expected_return_date, self.actual_return_date, ValidationError
@@ -63,6 +81,11 @@ class Borrowing(models.Model):
     def save(
         self, force_insert=False, force_update=False, using=None, update_field=None
     ):
+        if not self.actual_return_date:
+            self.book.decrease_book_inventory()
+        else:
+            self.book.increase_book_inventory()
+
         self.full_clean()
         return super(Borrowing, self).save(
             force_insert, force_update, using, update_field
