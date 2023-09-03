@@ -14,3 +14,11 @@ class Book(models.Model):
 
     def __str__(self):
         return f"{self.title} ({self.author})"
+
+    def decrease_book_inventory(self):
+        self.inventory -= 1
+        self.save()
+
+    def increase_book_inventory(self):
+        self.inventory += 1
+        self.save()
