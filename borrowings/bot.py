@@ -5,4 +5,4 @@ bot = telebot.TeleBot(token=config("BOT_TOKEN"))
 
 
 def send_borrowing_creation_notification(user, book_title):
-    bot.send_message(-993249091, f"{user} borrowed '{book_title}' book")
+    bot.send_message(config("CHAT_ID"), f"{user} borrowed '{book_title}' book")
