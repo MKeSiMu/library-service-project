@@ -37,3 +37,20 @@ class PaymentViewSet(
             return PaymentDetailSerializer
 
         return PaymentSerializer
+
+    @action(
+        methods=["GET"],
+        detail=False,
+        url_path="success",
+        permission_classes=[IsAuthenticated],
+    )
+    def success(self, request):
+        """Endpoint for success payment"""
+        session_id = self.request.query_params.get("session_id")
+        payment = Payment.objects.get(session_id=session_id)
+        payment.status = "Paid"
+        payment.save()
+        return Response(
+            {"message": f"Successful payment! Thank you, {payment.borrowing_id.user}"},
+            status=status.HTTP_200_OK,
+        )

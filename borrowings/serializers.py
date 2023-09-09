@@ -3,9 +3,7 @@ from rest_framework import serializers
 from books.serializers import BookSerializer
 from borrowings.models import Borrowing
 
-# from payments.serializers import PaymentDetailSerializer
 from payments.models import create_checkout_session
-from payments.serializers import PaymentSerializer
 
 
 class BorrowingSerializer(serializers.ModelSerializer):
@@ -52,12 +50,10 @@ class BorrowingSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "actual_return_date", "payments")
 
     def create(self, validated_data):
-
         borrowing = Borrowing.objects.create(**validated_data)
 
         create_checkout_session(borrowing)
 
-        borrowing.save()
         return borrowing
 
 

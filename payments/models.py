@@ -43,7 +43,7 @@ def create_checkout_session(borrowing):
             }
         ],
         mode="payment",
-        success_url="http://localhost:5000/success",
+        success_url="http://127.0.0.1:8000/api/payments/success?session_id={CHECKOUT_SESSION_ID}",
         cancel_url="http://localhost:5000/cancel",
     )
     payment = Payment.objects.create(
