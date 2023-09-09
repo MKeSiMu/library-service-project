@@ -1,4 +1,7 @@
+import stripe
+from decouple import config
 from django.db import models
+from django.shortcuts import redirect
 
 from borrowings.models import Borrowing
 
@@ -17,3 +20,38 @@ class Payment(models.Model):
 
     def __str__(self):
         return f"Borrowing ID: {self.borrowing_id}; Status: {self.status}"
+
+
+stripe.api_key = config("STRIPE_SECRET_KEY")
+
+
+def create_checkout_session(borrowing):
+    days_count = borrowing.expected_return_date - borrowing.borrow_date
+    total_amount = int(borrowing.book.daily_fee * days_count.days * 100)
+    session = stripe.checkout.Session.create(
+        customer_email=borrowing.user.email,
+        line_items=[
+            {
+                "price_data": {
+                    "currency": "usd",
+                    "product_data": {
+                        "name": borrowing.book.title,
+                    },
+                    "unit_amount": total_amount,
+                },
+                "quantity": 1,
+            }
+        ],
+        mode="payment",
+        success_url="http://localhost:5000/success",
+        cancel_url="http://localhost:5000/cancel",
+    )
+    payment = Payment.objects.create(
+        status="Pending",
+        type="Payment",
+        borrowing_id=borrowing,
+        session_url=session.url,
+        session_id=session.id,
+        money_to_pay=total_amount / 100,
+    )
+    return payment
