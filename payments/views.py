@@ -54,3 +54,20 @@ class PaymentViewSet(
             {"message": f"Successful payment! Thank you, {payment.borrowing_id.user}"},
             status=status.HTTP_200_OK,
         )
+
+    @action(
+        methods=["GET"],
+        detail=False,
+        url_path="cancel",
+        permission_classes=[IsAuthenticated],
+    )
+    def cancel(self, request):
+        """Endpoint if customer decide to cancel payment and return to website"""
+        session_id = self.request.query_params.get("session_id")
+        payment = Payment.objects.get(session_id=session_id)
+        payment.status = "Paid"
+        payment.save()
+        return Response(
+            {"message": f"Take your time, {payment.borrowing_id.user}. Payment can be paid a bit later (but the session is available for only 24h)!"},
+            status=status.HTTP_402_PAYMENT_REQUIRED,
+        )

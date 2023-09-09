@@ -1,6 +1,8 @@
+from django.db import transaction
 from rest_framework import serializers
 
 from books.serializers import BookSerializer
+from borrowings.bot import send_borrowing_creation_notification
 from borrowings.models import Borrowing
 
 from payments.models import create_checkout_session
@@ -50,9 +52,10 @@ class BorrowingSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "actual_return_date", "payments")
 
     def create(self, validated_data):
-        borrowing = Borrowing.objects.create(**validated_data)
-
-        create_checkout_session(borrowing)
+        with transaction.atomic():
+            borrowing = Borrowing.objects.create(**validated_data)
+            create_checkout_session(borrowing)
+            send_borrowing_creation_notification(borrowing.user, borrowing.book.title)
 
         return borrowing
 

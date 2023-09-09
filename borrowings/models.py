@@ -2,7 +2,7 @@ import datetime
 
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from django.db import models
+from django.db import models, transaction
 from django.db.models import CheckConstraint, Q, F
 
 from books.models import Book
@@ -88,7 +88,7 @@ class Borrowing(models.Model):
 
         if not self.actual_return_date:
             self.book.decrease_book_inventory()
-            send_borrowing_creation_notification(self.user, self.book.title)
+            # send_borrowing_creation_notification(self.user, self.book.title)
         else:
             self.book.increase_book_inventory()
 
