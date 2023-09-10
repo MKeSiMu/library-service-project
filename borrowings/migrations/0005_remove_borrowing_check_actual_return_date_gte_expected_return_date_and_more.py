@@ -4,18 +4,20 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('borrowings', '0004_remove_borrowing_check_expected_return_date_gt_borrow_date_and_more'),
+        (
+            "borrowings",
+            "0004_remove_borrowing_check_expected_return_date_gt_borrow_date_and_more",
+        ),
     ]
 
     operations = [
         migrations.RemoveConstraint(
-            model_name='borrowing',
-            name='check_actual_return_date_gte_expected_return_date',
+            model_name="borrowing",
+            name="check_actual_return_date_gte_expected_return_date",
         ),
         migrations.RemoveConstraint(
-            model_name='borrowing',
-            name='check_expected_return_date_gt_borrow_date',
+            model_name="borrowing",
+            name="check_expected_return_date_gt_borrow_date",
         ),
     ]

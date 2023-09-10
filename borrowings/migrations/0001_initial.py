@@ -6,35 +6,64 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
-        ('books', '0002_alter_book_daily_fee'),
+        ("books", "0002_alter_book_daily_fee"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Borrowing',
+            name="Borrowing",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('borrow_date', models.DateTimeField(auto_now_add=True)),
-                ('expected_return_date', models.DateTimeField()),
-                ('actual_return_date', models.DateTimeField()),
-                ('book', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='borrowings', to='books.book')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='borrowings', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("borrow_date", models.DateTimeField(auto_now_add=True)),
+                ("expected_return_date", models.DateTimeField()),
+                ("actual_return_date", models.DateTimeField()),
+                (
+                    "book",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="borrowings",
+                        to="books.book",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.PROTECT,
+                        related_name="borrowings",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['borrow_date'],
+                "ordering": ["borrow_date"],
             },
         ),
         migrations.AddConstraint(
-            model_name='borrowing',
-            constraint=models.CheckConstraint(check=models.Q(('expected_return_date__gt', models.F('borrow_date'))), name='check_expected_return_date_gt_borrow_date'),
+            model_name="borrowing",
+            constraint=models.CheckConstraint(
+                check=models.Q(("expected_return_date__gt", models.F("borrow_date"))),
+                name="check_expected_return_date_gt_borrow_date",
+            ),
         ),
         migrations.AddConstraint(
-            model_name='borrowing',
-            constraint=models.CheckConstraint(check=models.Q(('actual_return_date__gte', models.F('expected_return_date'))), name='check_actual_return_date_gte_expected_return_date'),
+            model_name="borrowing",
+            constraint=models.CheckConstraint(
+                check=models.Q(
+                    ("actual_return_date__gte", models.F("expected_return_date"))
+                ),
+                name="check_actual_return_date_gte_expected_return_date",
+            ),
         ),
     ]

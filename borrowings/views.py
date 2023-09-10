@@ -49,10 +49,8 @@ class BorrowingViewSet(
             return Response(serializer.data, status.HTTP_201_CREATED)
 
     def get_queryset(self):
-        queryset = (
-            self.queryset
-            .select_related("user", "book")
-            .prefetch_related("payments")
+        queryset = self.queryset.select_related("user", "book").prefetch_related(
+            "payments"
         )
 
         user_id = self.request.query_params.get("user_id")
@@ -124,17 +122,15 @@ class BorrowingViewSet(
             OpenApiParameter(
                 "user_id",
                 type=int,
-                description=(
-                        "If user is_staff, filter by User id(ex. ?user_id=1)"
-                )
+                description=("If user is_staff, filter by User id(ex. ?user_id=1)"),
             ),
             OpenApiParameter(
                 "is_active",
                 type=str,
                 description=(
-                        "filtering by active borrowings (still not returned)"
-                        "(ex. ?is_active=true)"
-                )
+                    "filtering by active borrowings (still not returned)"
+                    "(ex. ?is_active=true)"
+                ),
             ),
         ],
     )

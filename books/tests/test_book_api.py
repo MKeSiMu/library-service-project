@@ -21,8 +21,7 @@ def sample_book(**params):
         "author": "Sample Author",
         "cover": "Soft",
         "inventory": 5,
-        "daily_fee": 0.60
-
+        "daily_fee": 0.60,
     }
 
     defaults.update(params)
@@ -42,10 +41,7 @@ class UnauthenticatedBookApiTests(TestCase):
 class AuthenticatedBookApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.user = get_user_model().objects.create_user(
-            "test@teset.com",
-            "testpass"
-        )
+        self.user = get_user_model().objects.create_user("test@teset.com", "testpass")
         self.client.force_authenticate(self.user)
 
     def test_list_books(self):
@@ -55,7 +51,7 @@ class AuthenticatedBookApiTests(TestCase):
             author="New Sample Author",
             cover="Hard",
             inventory=10,
-            daily_fee=0.50
+            daily_fee=0.50,
         )
 
         res = self.client.get(BOOK_URL)
@@ -84,7 +80,7 @@ class AuthenticatedBookApiTests(TestCase):
             "author": "New Sample Author",
             "cover": "Hard",
             "inventory": 10,
-            "daily_fee": 0.50
+            "daily_fee": 0.50,
         }
 
         res = self.client.post(BOOK_URL, payload)
@@ -96,9 +92,7 @@ class AdminBookApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = get_user_model().objects.create_user(
-            "admin@admin.com",
-            "testpass",
-            is_staff=True
+            "admin@admin.com", "testpass", is_staff=True
         )
         self.client.force_authenticate(self.user)
 
@@ -108,7 +102,7 @@ class AdminBookApiTests(TestCase):
             "author": "New Sample Author",
             "cover": "H",
             "inventory": 10,
-            "daily_fee": 0.50
+            "daily_fee": 0.50,
         }
 
         res = self.client.post(BOOK_URL, payload)

@@ -4,23 +4,39 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Payment',
+            name="Payment",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('status', models.CharField(choices=[('Pending', 'PENDING'), ('Paid', 'PAID')], max_length=7)),
-                ('type', models.CharField(choices=[('Payment', 'PAYMENT'), ('Fine', 'FINE')], max_length=7)),
-                ('borrowing_id', models.IntegerField()),
-                ('session_url', models.URLField()),
-                ('session_id', models.CharField(max_length=100)),
-                ('money_to_pay', models.DecimalField(decimal_places=2, max_digits=5)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[("Pending", "PENDING"), ("Paid", "PAID")], max_length=7
+                    ),
+                ),
+                (
+                    "type",
+                    models.CharField(
+                        choices=[("Payment", "PAYMENT"), ("Fine", "FINE")], max_length=7
+                    ),
+                ),
+                ("borrowing_id", models.IntegerField()),
+                ("session_url", models.URLField()),
+                ("session_id", models.CharField(max_length=100)),
+                ("money_to_pay", models.DecimalField(decimal_places=2, max_digits=5)),
             ],
         ),
     ]

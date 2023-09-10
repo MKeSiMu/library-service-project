@@ -48,9 +48,10 @@ class PaymentViewSet(
         payment.status = "Paid"
         payment.save()
         return Response(
-            {"message": (
-                f"Successful payment! Thank you, {payment.borrowing_id.user}"
-            )
+            {
+                "message": (
+                    f"Successful payment! Thank you, {payment.borrowing_id.user}"
+                )
             },
             status=status.HTTP_200_OK,
         )
@@ -69,10 +70,12 @@ class PaymentViewSet(
         payment.status = "Paid"
         payment.save()
         return Response(
-            {"message": (
-                f"Take your time, {payment.borrowing_id.user}. "
-                f"Payment can be paid a bit later "
-                f"(but the session is available for only 24h)!"
-            )},
+            {
+                "message": (
+                    f"Take your time, {payment.borrowing_id.user}. "
+                    f"Payment can be paid a bit later "
+                    f"(but the session is available for only 24h)!"
+                )
+            },
             status=status.HTTP_402_PAYMENT_REQUIRED,
         )

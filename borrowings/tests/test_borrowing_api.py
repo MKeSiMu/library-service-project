@@ -24,8 +24,7 @@ def sample_book(**params):
         "author": "Sample Author",
         "cover": "Soft",
         "inventory": 5,
-        "daily_fee": 0.60
-
+        "daily_fee": 0.60,
     }
 
     defaults.update(params)
@@ -35,9 +34,7 @@ def sample_book(**params):
 
 def sample_borrowing(**params):
     defaults = {
-        "expected_return_date": (
-                datetime.date.today() + datetime.timedelta(days=2)
-        ),
+        "expected_return_date": (datetime.date.today() + datetime.timedelta(days=2)),
         "book": sample_book(),
     }
 
@@ -58,23 +55,15 @@ class UnauthenticatedBorrowingApiTests(TestCase):
 class AuthenticatedBorrowingApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
-        self.user = get_user_model().objects.create_user(
-            "test@teset.com",
-            "testpass"
-        )
+        self.user = get_user_model().objects.create_user("test@teset.com", "testpass")
         self.client.force_authenticate(self.user)
 
     def test_return_only_user_list_borrowings(self):
         another_user = get_user_model().objects.create_user(
-            "new_test@teset.com",
-            "new_testpass"
+            "new_test@teset.com", "new_testpass"
         )
-        authenticated_user_borrowing = sample_borrowing(
-            user=self.user
-        )
-        another_user_borrowing = sample_borrowing(
-            user=another_user
-        )
+        authenticated_user_borrowing = sample_borrowing(user=self.user)
+        another_user_borrowing = sample_borrowing(user=another_user)
 
         res = self.client.get(BORROWING_URL)
 
@@ -88,10 +77,10 @@ class AuthenticatedBorrowingApiTests(TestCase):
     def test_create_borrowing_with_payment(self):
         payload = {
             "expected_return_date": (
-                    datetime.date.today() + datetime.timedelta(days=2)
+                datetime.date.today() + datetime.timedelta(days=2)
             ),
             "book": sample_book().id,
-            "user": self.user.id
+            "user": self.user.id,
         }
 
         res = self.client.post(BORROWING_URL, payload)
@@ -113,23 +102,16 @@ class AdminBorrowingApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
         self.user = get_user_model().objects.create_user(
-            "admin@admin.com",
-            "testpass",
-            is_staff=True
+            "admin@admin.com", "testpass", is_staff=True
         )
         self.client.force_authenticate(self.user)
 
     def test_return_all_user_list_borrowings(self):
         another_user = get_user_model().objects.create_user(
-            "new_test@teset.com",
-            "new_testpass"
+            "new_test@teset.com", "new_testpass"
         )
-        authenticated_admin_user_borrowing = sample_borrowing(
-            user=self.user
-        )
-        another_user_borrowing = sample_borrowing(
-            user=another_user
-        )
+        authenticated_admin_user_borrowing = sample_borrowing(user=self.user)
+        another_user_borrowing = sample_borrowing(user=another_user)
 
         res = self.client.get(BORROWING_URL)
 
@@ -141,9 +123,7 @@ class AdminBorrowingApiTests(TestCase):
         self.assertIn(serializer2.data, res.data["results"])
 
     def test_delete_borrowing_not_allowed(self):
-        borrowing = sample_borrowing(
-            user=self.user
-        )
+        borrowing = sample_borrowing(user=self.user)
 
         url = detail_url(borrowing.id)
 

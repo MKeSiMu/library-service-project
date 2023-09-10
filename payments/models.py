@@ -61,12 +61,9 @@ def create_checkout_session(borrowing):
 
 def create_fine_checkout_session(borrowing):
     fine_multiplier = 2
-    fine_days_count = (
-            borrowing.actual_return_date - borrowing.expected_return_date
-    )
+    fine_days_count = borrowing.actual_return_date - borrowing.expected_return_date
     fine_amount = (
-        int(borrowing.book.daily_fee * fine_days_count.days * 100)
-        * fine_multiplier
+        int(borrowing.book.daily_fee * fine_days_count.days * 100) * fine_multiplier
     )
     session = stripe.checkout.Session.create(
         customer_email=borrowing.user.email,

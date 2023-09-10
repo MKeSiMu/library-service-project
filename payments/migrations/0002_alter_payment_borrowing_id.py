@@ -5,16 +5,22 @@ import django.db.models.deletion
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('borrowings', '0005_remove_borrowing_check_actual_return_date_gte_expected_return_date_and_more'),
-        ('payments', '0001_initial'),
+        (
+            "borrowings",
+            "0005_remove_borrowing_check_actual_return_date_gte_expected_return_date_and_more",
+        ),
+        ("payments", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='payment',
-            name='borrowing_id',
-            field=models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name='payments', to='borrowings.borrowing'),
+            model_name="payment",
+            name="borrowing_id",
+            field=models.ForeignKey(
+                on_delete=django.db.models.deletion.PROTECT,
+                related_name="payments",
+                to="borrowings.borrowing",
+            ),
         ),
     ]

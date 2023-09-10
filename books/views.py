@@ -3,11 +3,7 @@ from rest_framework.pagination import PageNumberPagination
 
 from books.models import Book
 from books.permissions import IsAdminOrReadOnly
-from books.serializers import (
-    BookSerializer,
-    BookListSerializer,
-    BookDetailSerializer
-)
+from books.serializers import BookSerializer, BookListSerializer, BookDetailSerializer
 
 
 class BookPagination(PageNumberPagination):
@@ -21,7 +17,7 @@ class BookViewSet(
     mixins.CreateModelMixin,
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
-    viewsets.GenericViewSet
+    viewsets.GenericViewSet,
 ):
     queryset = Book.objects.all()
     serializer_class = BookSerializer
