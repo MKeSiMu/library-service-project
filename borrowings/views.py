@@ -1,6 +1,7 @@
 import datetime
 
 from django.db import transaction
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, mixins, status
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -53,7 +54,7 @@ class BorrowingViewSet(
         if user_id and self.request.user.is_staff:
             queryset = queryset.filter(user_id=int(user_id))
 
-        if is_active is not None:
+        if is_active == "true":
             queryset = queryset.filter(actual_return_date__isnull=True)
 
         if not self.request.user.is_staff:
@@ -109,3 +110,20 @@ class BorrowingViewSet(
             {"message": "This book is already returned"},
             status=status.HTTP_403_FORBIDDEN,
         )
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "user_id",
+                type=int,
+                description="If user is_staff, filter by User id(ex. ?user_id=1)"
+            ),
+            OpenApiParameter(
+                "is_active",
+                type=str,
+                description="filtering by active borrowings (still not returned)(ex. ?is_active=true)"
+            ),
+        ],
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
