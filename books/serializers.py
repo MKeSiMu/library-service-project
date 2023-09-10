@@ -4,7 +4,6 @@ from books.models import Book
 
 
 class BookSerializer(serializers.ModelSerializer):
-    cover = serializers.CharField(source="get_cover_display")
     daily_fee = serializers.FloatField()
 
     class Meta:
@@ -17,3 +16,7 @@ class BookListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
         fields = ("id", "title", "author", "inventory")
+
+
+class BookDetailSerializer(BookSerializer):
+    cover = serializers.CharField(source="get_cover_display")
