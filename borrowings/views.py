@@ -25,6 +25,25 @@ class BorrowingViewSet(
     serializer_class = BorrowingSerializer
     permission_classes = (IsAuthenticated,)
 
+    def create(self, request, *args, **kwargs):
+        unpaid_payments_count = Borrowing.objects.filter(
+            user=self.request.user.id, payments__status__exact="Pending"
+        ).count()
+
+        if unpaid_payments_count > 0:
+            return Response(
+                {
+                    "message": "You have unpaid fees. Please pay first and then you can borrow new books."
+                },
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        if request.user.is_authenticated:
+            serializer = self.get_serializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save(user=request.user)
+            return Response(serializer.data, status.HTTP_201_CREATED)
+
     def get_queryset(self):
         queryset = self.queryset.select_related("user", "book").prefetch_related("payments")
 
