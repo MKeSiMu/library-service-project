@@ -11,9 +11,15 @@ class Borrowing(models.Model):
     borrow_date = models.DateField(auto_now_add=True)
     expected_return_date = models.DateField()
     actual_return_date = models.DateField(null=True, blank=True)
-    book = models.ForeignKey(Book, on_delete=models.PROTECT, related_name="borrowings")
+    book = models.ForeignKey(
+        Book,
+        on_delete=models.PROTECT,
+        related_name="borrowings"
+    )
     user = models.ForeignKey(
-        settings.AUTH_USER_MODEL, on_delete=models.PROTECT, related_name="borrowings"
+        settings.AUTH_USER_MODEL,
+        on_delete=models.PROTECT,
+        related_name="borrowings"
     )
 
     class Meta:
@@ -49,7 +55,8 @@ class Borrowing(models.Model):
                 raise error_to_raise(
                     {
                         "actual_return_date": (
-                            "Actual return date should be greater or equal to expected return date"
+                            "Actual return date should be greater "
+                            "or equal to expected return date"
                         )
                     }
                 )
@@ -63,19 +70,30 @@ class Borrowing(models.Model):
                 )
 
     def clean(
-        self, force_insert=False, force_update=False, using=None, update_field=None
+            self,
+            force_insert=False,
+            force_update=False,
+            using=None,
+            update_field=None
     ):
         Borrowing.validate_book_inventory(
-            self.borrow_date, self.book.inventory, self.book.title, ValidationError
+            self.borrow_date,
+            self.book.inventory,
+            self.book.title,
+            ValidationError
         )
 
         Borrowing.validate_expected_return_date(
-            self.borrow_date, self.expected_return_date, ValidationError
+            self.borrow_date,
+            self.expected_return_date,
+            ValidationError
         )
 
         if self.actual_return_date:
             Borrowing.validate_actual_return_date(
-                self.expected_return_date, self.actual_return_date, ValidationError
+                self.expected_return_date,
+                self.actual_return_date,
+                ValidationError
             )
 
     def save(

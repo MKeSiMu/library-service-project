@@ -42,8 +42,12 @@ def create_checkout_session(borrowing):
             }
         ],
         mode="payment",
-        success_url="http://127.0.0.1:8000/api/payments/success?session_id={CHECKOUT_SESSION_ID}",
-        cancel_url="http://127.0.0.1:8000/api/payments/cancel?session_id={CHECKOUT_SESSION_ID}",
+        success_url=(
+            "http://127.0.0.1:8000/api/payments/success?session_id={CHECKOUT_SESSION_ID}"
+        ),
+        cancel_url=(
+            "http://127.0.0.1:8000/api/payments/cancel?session_id={CHECKOUT_SESSION_ID}"
+        ),
     )
     payment = Payment.objects.create(
         status="Pending",
@@ -57,9 +61,12 @@ def create_checkout_session(borrowing):
 
 def create_fine_checkout_session(borrowing):
     fine_multiplier = 2
-    fine_days_count = borrowing.actual_return_date - borrowing.expected_return_date
+    fine_days_count = (
+            borrowing.actual_return_date - borrowing.expected_return_date
+    )
     fine_amount = (
-        int(borrowing.book.daily_fee * fine_days_count.days * 100) * fine_multiplier
+        int(borrowing.book.daily_fee * fine_days_count.days * 100)
+        * fine_multiplier
     )
     session = stripe.checkout.Session.create(
         customer_email=borrowing.user.email,
@@ -76,8 +83,12 @@ def create_fine_checkout_session(borrowing):
             }
         ],
         mode="payment",
-        success_url="http://127.0.0.1:8000/api/payments/success?session_id={CHECKOUT_SESSION_ID}",
-        cancel_url="http://127.0.0.1:8000/api/payments/cancel?session_id={CHECKOUT_SESSION_ID}",
+        success_url=(
+            "http://127.0.0.1:8000/api/payments/success?session_id={CHECKOUT_SESSION_ID}"
+        ),
+        cancel_url=(
+            "http://127.0.0.1:8000/api/payments/cancel?session_id={CHECKOUT_SESSION_ID}"
+        ),
         after_expiration={
             "recovery": {
                 "enabled": True,

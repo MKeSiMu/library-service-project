@@ -4,7 +4,10 @@ import os
 
 from celery import Celery
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "library_service_project.settings")
+os.environ.setdefault(
+    "DJANGO_SETTINGS_MODULE",
+    "library_service_project.settings"
+)
 
 app = Celery("library_service_project")
 

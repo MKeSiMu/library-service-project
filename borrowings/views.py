@@ -34,7 +34,10 @@ class BorrowingViewSet(
         if unpaid_payments_count > 0:
             return Response(
                 {
-                    "message": "You have unpaid fees. Please pay first and then you can borrow new books."
+                    "message": (
+                        "You have unpaid fees. "
+                        "Please pay first and then you can borrow new books."
+                    )
                 },
                 status=status.HTTP_403_FORBIDDEN,
             )
@@ -46,7 +49,11 @@ class BorrowingViewSet(
             return Response(serializer.data, status.HTTP_201_CREATED)
 
     def get_queryset(self):
-        queryset = self.queryset.select_related("user", "book").prefetch_related("payments")
+        queryset = (
+            self.queryset
+            .select_related("user", "book")
+            .prefetch_related("payments")
+        )
 
         user_id = self.request.query_params.get("user_id")
         is_active = self.request.query_params.get("is_active")
@@ -94,8 +101,9 @@ class BorrowingViewSet(
                     return Response(
                         {
                             "message": (
-                                f"Thank you for returning the book! "
-                                f"But you still have to pay a fine for days of overdue."
+                                "Thank you for returning the book! "
+                                "But you still have to pay a fine "
+                                "for days of overdue."
                             )
                         },
                         status=status.HTTP_200_OK,
@@ -116,12 +124,17 @@ class BorrowingViewSet(
             OpenApiParameter(
                 "user_id",
                 type=int,
-                description="If user is_staff, filter by User id(ex. ?user_id=1)"
+                description=(
+                        "If user is_staff, filter by User id(ex. ?user_id=1)"
+                )
             ),
             OpenApiParameter(
                 "is_active",
                 type=str,
-                description="filtering by active borrowings (still not returned)(ex. ?is_active=true)"
+                description=(
+                        "filtering by active borrowings (still not returned)"
+                        "(ex. ?is_active=true)"
+                )
             ),
         ],
     )

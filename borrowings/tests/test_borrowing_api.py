@@ -8,7 +8,6 @@ from rest_framework import status
 from rest_framework.test import APIClient
 
 from books.models import Book
-from books.serializers import BookSerializer, BookListSerializer
 from borrowings.models import Borrowing
 from borrowings.serializers import BorrowingSerializer
 
@@ -36,7 +35,9 @@ def sample_book(**params):
 
 def sample_borrowing(**params):
     defaults = {
-        "expected_return_date": datetime.date.today() + datetime.timedelta(days=2),
+        "expected_return_date": (
+                datetime.date.today() + datetime.timedelta(days=2)
+        ),
         "book": sample_book(),
     }
 
@@ -86,7 +87,9 @@ class AuthenticatedBorrowingApiTests(TestCase):
 
     def test_create_borrowing_with_payment(self):
         payload = {
-            "expected_return_date": datetime.date.today() + datetime.timedelta(days=2),
+            "expected_return_date": (
+                    datetime.date.today() + datetime.timedelta(days=2)
+            ),
             "book": sample_book().id,
             "user": self.user.id
         }
