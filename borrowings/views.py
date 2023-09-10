@@ -12,6 +12,7 @@ from borrowings.serializers import (
     BorrowingDetailSerializer,
     BorrowingReturnSerializer,
 )
+from payments.models import create_fine_checkout_session
 
 
 class BorrowingViewSet(
@@ -25,7 +26,7 @@ class BorrowingViewSet(
     permission_classes = (IsAuthenticated,)
 
     def get_queryset(self):
-        queryset = self.queryset.select_related("user", "book")
+        queryset = self.queryset.select_related("user", "book").prefetch_related("payments")
 
         user_id = self.request.query_params.get("user_id")
         is_active = self.request.query_params.get("is_active")
@@ -66,10 +67,25 @@ class BorrowingViewSet(
             with transaction.atomic():
                 borrowing.actual_return_date = datetime.date.today()
                 borrowing.save()
-                return Response(
-                    {"message": "You successfully returned book"},
-                    status=status.HTTP_200_OK,
-                )
+
+                if borrowing.actual_return_date > borrowing.expected_return_date:
+                    create_fine_checkout_session(borrowing)
+
+                    return Response(
+                        {
+                            "message": (
+                                f"Thank you for returning the book! "
+                                f"But you still have to pay a fine for days of overdue."
+                            )
+                        },
+                        status=status.HTTP_200_OK,
+                    )
+
+                if borrowing.actual_return_date == borrowing.expected_return_date:
+                    return Response(
+                        {"message": "You successfully returned book"},
+                        status=status.HTTP_200_OK,
+                    )
         return Response(
             {"message": "This book is already returned"},
             status=status.HTTP_403_FORBIDDEN,
